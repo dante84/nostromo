@@ -1,0 +1,47 @@
+
+pack.png
+size: 2048,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+bverde
+  rotate: false
+  xy: 724, 684
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+disparo
+  rotate: false
+  xy: 2, 2
+  size: 371, 216
+  orig: 371, 216
+  offset: 0, 0
+  index: -1
+fondo
+  rotate: false
+  xy: 2, 942
+  size: 1920, 1080
+  orig: 1920, 1080
+  offset: 0, 0
+  index: -1
+nave
+  rotate: false
+  xy: 2, 220
+  size: 720, 720
+  orig: 720, 720
+  offset: 0, 0
+  index: -1
+
+pack2.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+pad
+  rotate: false
+  xy: 2, 2
+  size: 980, 980
+  orig: 980, 980
+  offset: 0, 0
+  index: -1
