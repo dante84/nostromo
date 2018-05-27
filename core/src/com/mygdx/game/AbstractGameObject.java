@@ -55,6 +55,8 @@ public abstract class AbstractGameObject {
 
     public abstract void render(SpriteBatch batch);
 
+    public abstract void render(SpriteBatch batch,OrthographicCamera camara);
+
     protected void updateMotionX (float deltaTime) {
 
         if ( velocity.x != 0 ) {

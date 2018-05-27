@@ -53,4 +53,7 @@ public class Fondo extends AbstractGameObject {
 
        }
 
+       @Override
+       public void render(SpriteBatch batch,OrthographicCamera camara) {}
+
 }

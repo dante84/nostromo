@@ -21,10 +21,10 @@ public class Nivel {
 
     }
 
-    public void render(SpriteBatch batch) {
+    public void render(SpriteBatch batch,OrthographicCamera camera) {
 
            fondo.render(batch);
-           nave.render(batch);
+           nave.render(batch,camera);
 
     }
 

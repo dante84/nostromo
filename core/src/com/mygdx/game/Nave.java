@@ -30,29 +30,47 @@ public class Nave extends AbstractGameObject {
        }
 
        @Override
-       public void render(SpriteBatch batch) {
+       public void render(SpriteBatch batch,OrthographicCamera camera) {
 
            TextureRegion reg = null;
            // Draw image
            reg = tRegion;
-           batch.draw(reg.getTexture(), position.x, position.y, origin.x,
-                   origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation,
-                   reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(),
-                   reg.getRegionHeight(), false,
-                   false);
+           batch.draw(reg.getTexture(),
+                   position.x, position.y,
+                   origin.x, origin.y,
+                   dimension.x, dimension.y,
+                   scale.x, scale.y,
+                   rotation,
+                   reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(),
+                   false, false);
            // Reset color to white
            batch.setColor(1, 1, 1, 1);
 
            if( Gdx.input.justTouched() ){
-               Disparo disparo = new Disparo();
-               disparo.render(batch);
-               disparos.add(disparo);
+
+               int x = Gdx.input.getX();
+               int y = Gdx.input.getY();
+
+               System.out.println(x + " - " + y);
+
+               Vector3 posicion = camera.unproject(new Vector3(x, y, 0));
+
+               if( ( x >= 810 && x <= 900 ) && ( y >= 400 && y <= 460 ) ) {
+
+                   Disparo disparo = new Disparo(position.x + dimension.x, dimension.y + position.y);
+                   disparo.render(batch);
+                   disparos.add(disparo);
+
+               }
+
            }else{
+
                  if( disparos.size() > 0 ) {
-                     for( Disparo disparo : disparos ){
-                          disparo.render(batch);
-                     }
-                 }
+                   for( Disparo disparo : disparos ){
+                       disparo.render(batch);
+                   }
+               }
+
            }
 
            //System.out.println("render - " + disparos.size());
@@ -65,15 +83,33 @@ public class Nave extends AbstractGameObject {
               //position.x += velocity.x * deltaTime;
               //position.y += velocity.y * deltaTime;
 
-              if( Gdx.input.justTouched() ){
+              if( Gdx.input.isTouched() ){
 
                   int x = Gdx.input.getX();
                   int y = Gdx.input.getY();
 
                   Vector3 posicion = camara.unproject(new Vector3(x,y,0));
 
-                  position.x += ( velocity.x + posicion.x ) * deltaTime;
-                  position.y += ( velocity.y + posicion.y ) * deltaTime;
+                  if( x >= 50 && x <= 100 ){
+                      if( y >= 230 ){
+                         //position.x -= ( velocity.x + posicion.x ) * deltaTime;
+                         position.y += ( velocity.y + posicion.y ) * deltaTime;
+                      }
+                  }else{
+                      //if( y >= )
+                      if( x > 100 && x <= 150 ){
+
+                          if( x > 100 && x <= 125 ){
+                              position.x -= ( velocity.x + posicion.x ) * deltaTime;
+                          }
+
+                          if( x > 125 && x <= 150 ){
+                              position.x += ( velocity.x + posicion.x ) * deltaTime;
+                          }
+                      }
+                  }
+
+
 
                   //System.out.println("update - " + disparos.size());
 
@@ -86,5 +122,8 @@ public class Nave extends AbstractGameObject {
               }
 
        }
+
+    @Override
+    public void render(SpriteBatch batch) {}
 
 }
