@@ -27,7 +27,6 @@ public class Fondo extends AbstractGameObject {
               position.x -= velocity.x * deltaTime;
               position.y += velocity.y * deltaTime;
 
-
        }
 
        @Override

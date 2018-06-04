@@ -19,10 +19,12 @@ public class Assets implements Disposable,AssetErrorListener{
     public AssetFonts fonts;
 
     public AssetNave nave;
+    public AssetEnemigoUno enemigoUno;
     public AssetFondo fondo;
     public AssetBotonVerde botonVerde;
     public AssetDisparo disparo;
     public AssetPad pad;
+    public AssetBorde borde;
 
     // singleton: prevent instantiation from other classes
     private Assets () {}
@@ -54,10 +56,12 @@ public class Assets implements Disposable,AssetErrorListener{
         // create game resource objects
         fondo = new AssetFondo(atlas);
         nave  = new AssetNave(atlas);
+        enemigoUno = new AssetEnemigoUno(atlas);
         botonVerde = new AssetBotonVerde(atlas);
         fonts = new AssetFonts();
         disparo = new AssetDisparo(atlas);
         pad = new AssetPad(atlas);
+        borde = new AssetBorde(atlas);
 
     }
     @Override
@@ -113,6 +117,13 @@ public class Assets implements Disposable,AssetErrorListener{
         }
     }
 
+    public class AssetEnemigoUno {
+        public final AtlasRegion head;
+        public AssetEnemigoUno (TextureAtlas atlas) {
+            head = atlas.findRegion("enemigo");
+        }
+    }
+
     public class AssetPad {
         public final AtlasRegion head;
         public AssetPad (TextureAtlas atlas) {
@@ -143,6 +154,15 @@ public class Assets implements Disposable,AssetErrorListener{
         public AssetDisparo (TextureAtlas atlas) {
 
             head = atlas.findRegion("disparo");
+
+        }
+    }
+
+    public class AssetBorde {
+        public final AtlasRegion head;
+        public AssetBorde (TextureAtlas atlas) {
+
+            head = atlas.findRegion("borde");
 
         }
     }

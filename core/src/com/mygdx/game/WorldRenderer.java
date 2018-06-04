@@ -49,12 +49,9 @@ public class WorldRenderer implements Disposable {
 
     private void renderPad(SpriteBatch batch) {
 
-        float x = -15;
-        float y = -15;
-
         batch.draw(Assets.instance.pad.head,
-                x, y,
-                50, 230,
+                30, 70,
+                870, 200,
                 150, 150,
                 1.0f, -1.0f,
                 0);
@@ -76,10 +73,12 @@ public class WorldRenderer implements Disposable {
     }
 
     private void renderGuiFpsCounter (SpriteBatch batch) {
+
         float x = cameraGUI.viewportWidth - 55;
         float y = cameraGUI.viewportHeight - 15;
         int fps = Gdx.graphics.getFramesPerSecond();
         BitmapFont fpsFont = Assets.instance.fonts.defaultNormal;
+
         if (fps >= 45) {
 // 45 or more FPS show up in green
             fpsFont.setColor(0, 1, 0, 1);
@@ -90,8 +89,10 @@ public class WorldRenderer implements Disposable {
 // less than 30 FPS show up in red
             fpsFont.setColor(1, 0, 0, 1);
         }
+
         fpsFont.draw(batch, "FPS: " + fps, x, y);
         fpsFont.setColor(1, 1, 1, 1); // white
+
     }
 
     private void renderGui (SpriteBatch batch) {
@@ -127,4 +128,5 @@ public class WorldRenderer implements Disposable {
         batch.dispose();
 
     }
+
 }
