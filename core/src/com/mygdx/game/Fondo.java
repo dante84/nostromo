@@ -22,7 +22,7 @@ public class Fondo extends AbstractGameObject {
        }
 
        @Override
-       public void update(float deltaTime, OrthographicCamera camara) {
+       public void update(float deltaTime) {
 
               position.x -= velocity.x * deltaTime;
               position.y += velocity.y * deltaTime;

@@ -25,7 +25,7 @@ public class Borde extends AbstractGameObject {
     }
 
     @Override
-    public void update(float deltaTime, OrthographicCamera camara) {
+    public void update(float deltaTime) {
 
     }
 
@@ -35,8 +35,6 @@ public class Borde extends AbstractGameObject {
         TextureRegion reg = null;
         // Draw image
         reg = tRegion;
-
-        //System.out.println("render = " + position.x + " - " + position.y);
 
         batch.draw(reg.getTexture(),
                 contorno.x, contorno.y,

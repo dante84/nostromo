@@ -51,7 +51,7 @@ public abstract class AbstractGameObject {
 
     }*/
 
-    public abstract void update(float deltaTime, OrthographicCamera camara);
+    public abstract void update(float deltaTime);
 
     public abstract void render(SpriteBatch batch);
 

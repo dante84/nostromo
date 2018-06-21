@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Disposable;
@@ -23,8 +25,13 @@ public class Assets implements Disposable,AssetErrorListener{
     public AssetFondo fondo;
     public AssetBotonVerde botonVerde;
     public AssetDisparo disparo;
+    public AssetDisparoCargado disparoCargado;
+    public AssetDisparoCargado001 disparoCargado001;
+    public AssetDisparoCargado002 disparoCargado002;
     public AssetPad pad;
     public AssetBorde borde;
+    public AssetSounds sonidos;
+    public AssetMusic musica;
 
     // singleton: prevent instantiation from other classes
     private Assets () {}
@@ -36,6 +43,11 @@ public class Assets implements Disposable,AssetErrorListener{
 // load texture atlas
         assetManager.load(Constants.TEXTURE_ATLAS_OBJECTS,
                 TextureAtlas.class);
+
+        // load sounds
+        assetManager.load("sonidos/disparo.wav",   Sound.class);
+        assetManager.load("sonidos/explosion.wav", Sound.class);
+
 // start loading assets and wait until finished
         assetManager.finishLoading();
         Gdx.app.debug(TAG, "# of assets loaded: "
@@ -60,8 +72,13 @@ public class Assets implements Disposable,AssetErrorListener{
         botonVerde = new AssetBotonVerde(atlas);
         fonts = new AssetFonts();
         disparo = new AssetDisparo(atlas);
+        disparoCargado = new AssetDisparoCargado(atlas);
+        disparoCargado001 = new AssetDisparoCargado001(atlas);
+        disparoCargado002 = new AssetDisparoCargado002(atlas);
         pad = new AssetPad(atlas);
         borde = new AssetBorde(atlas);
+        sonidos = new AssetSounds(assetManager);
+        //musica = new AssetMusic(assetManager);
 
     }
     @Override
@@ -158,6 +175,33 @@ public class Assets implements Disposable,AssetErrorListener{
         }
     }
 
+    public class AssetDisparoCargado {
+        public final AtlasRegion head;
+        public AssetDisparoCargado (TextureAtlas atlas) {
+
+            head = atlas.findRegion("disparoCargado");
+
+        }
+    }
+
+    public class AssetDisparoCargado001 {
+        public final AtlasRegion head;
+        public AssetDisparoCargado001 (TextureAtlas atlas) {
+
+            head = atlas.findRegion("disparoCargado001");
+
+        }
+    }
+
+    public class AssetDisparoCargado002 {
+        public final AtlasRegion head;
+        public AssetDisparoCargado002 (TextureAtlas atlas) {
+
+            head = atlas.findRegion("disparoCargado002");
+
+        }
+    }
+
     public class AssetBorde {
         public final AtlasRegion head;
         public AssetBorde (TextureAtlas atlas) {
@@ -167,5 +211,29 @@ public class Assets implements Disposable,AssetErrorListener{
         }
     }
 
+    public class AssetSounds {
+
+
+        public final Sound disparo;
+        public final Sound explosion;
+
+        public AssetSounds (AssetManager am) {
+
+            disparo = am.get("sonidos/disparo.wav", Sound.class);
+
+            explosion = am.get("sonidos/explosion.wav", Sound.class);
+
+        }
+
+    }
+
+    public class AssetMusic {
+        public final Music song01;
+
+        public AssetMusic(AssetManager am) {
+            song01 = am.get("music/keith303_-_brand_new_highscore.mp3",
+                    Music.class);
+        }
+    }
 
 }

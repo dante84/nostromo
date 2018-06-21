@@ -35,16 +35,27 @@ public class WorldRenderer implements Disposable {
     public void render() {
 
            renderWorld(batch);
+
            renderGui(batch);
+
 
     }
 
     private void renderWorld (SpriteBatch batch) {
+
         worldController.cameraHelper.applyTo(camera);
+
         batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-              worldController.nivel.render(batch,camera);
-        batch.end();
+
+        try {
+            batch.begin();
+
+            worldController.nivel.render(batch, camera);
+
+            batch.end();
+
+        }catch(Exception e){ e.printStackTrace(); }
+
     }
 
     private void renderPad(SpriteBatch batch) {
@@ -95,6 +106,38 @@ public class WorldRenderer implements Disposable {
 
     }
 
+    private void renderGuiPuntaje (SpriteBatch batch) {
+
+        float x = 0;
+        float y = 0;
+
+        BitmapFont fuentePuntaje = Assets.instance.fonts.defaultNormal;
+
+        fuentePuntaje.setColor(1, 1, 1, 1); // white
+
+        fuentePuntaje.draw(batch, "Score : " + worldController.nivel.puntaje , x, y);
+
+
+    }
+
+    private void renderGuiTiempo (SpriteBatch batch) {
+
+        float x = (cameraGUI.viewportWidth / 2) - 25;
+        float y = 0;
+
+        BitmapFont fuenteTiempo = Assets.instance.fonts.defaultNormal;
+
+        fuenteTiempo.setColor(1, 1, 1, 1); // white
+
+        int levelTime = worldController.nivel.tiempoNivel;
+
+        if( levelTime > 0 )
+            fuenteTiempo.draw(batch, "Time : " + worldController.nivel.tiempoNivel, x, y);
+        else
+            fuenteTiempo.draw(batch, "Time : 00" , x, y);
+
+    }
+
     private void renderGui (SpriteBatch batch) {
 
         batch.setProjectionMatrix(cameraGUI.combined);
@@ -102,6 +145,8 @@ public class WorldRenderer implements Disposable {
 
         renderPad(batch);
         renderBotonVerde(batch);
+        renderGuiPuntaje(batch);
+        renderGuiTiempo(batch);
         renderGuiFpsCounter(batch);
 
         batch.end();

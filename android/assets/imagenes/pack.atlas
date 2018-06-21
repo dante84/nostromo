@@ -6,44 +6,65 @@ filter: Nearest,Nearest
 repeat: none
 borde
   rotate: false
-  xy: 724, 402
+  xy: 2, 367
   size: 700, 538
   orig: 700, 538
   offset: 0, 0
   index: -1
 bverde
   rotate: false
-  xy: 1426, 684
+  xy: 704, 481
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 disparo
   rotate: false
+  xy: 1426, 784
+  size: 201, 121
+  orig: 201, 121
+  offset: 0, 0
+  index: -1
+disparoCargado
+  rotate: false
   xy: 2, 2
-  size: 371, 216
-  orig: 371, 216
+  size: 603, 363
+  orig: 603, 363
+  offset: 0, 0
+  index: -1
+disparoCargado001
+  rotate: false
+  xy: 962, 616
+  size: 201, 121
+  orig: 201, 121
+  offset: 0, 0
+  index: -1
+disparoCargado002
+  rotate: false
+  xy: 1629, 784
+  size: 201, 121
+  orig: 201, 121
   offset: 0, 0
   index: -1
 enemigo
   rotate: false
-  xy: 2, 220
-  size: 720, 720
-  orig: 720, 720
+  xy: 704, 739
+  size: 720, 166
+  orig: 720, 166
   offset: 0, 0
   index: -1
 fondo
   rotate: false
-  xy: 2, 942
+  xy: 2, 907
   size: 1920, 1080
   orig: 1920, 1080
   offset: 0, 0
   index: -1
 nave
   rotate: false
-  xy: 375, 18
-  size: 200, 200
-  orig: 200, 200
+  xy: 704, 392
+  size: 198, 87
+  orig: 198, 87
   offset: 0, 0
   index: -1
 

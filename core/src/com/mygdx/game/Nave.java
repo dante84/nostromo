@@ -1,13 +1,12 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.Gdx;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,15 +14,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class Nave extends AbstractGameObject {
+public class Nave extends AbstractGameObject implements InputProcessor{
 
        private TextureRegion tRegion;
-       private List<Disparo> disparos;
+       protected List<Disparo> disparos;
        private List<Integer> punteros;
        private Map<Integer, Disparo> shoots;
        private static Disparo shoot;
-       private ShapeRenderer sr;
-       //Borde visible para propositos de pruebas de colisiones y debugeo
+       private float tiempoActual,tiempoPasado;
+       private int punteroCargado,x1,y1;
+
+       //Para propositos de pruebas de colisiones y debugeo
        private Borde borde;
 
        public Nave(){
@@ -32,7 +33,8 @@ public class Nave extends AbstractGameObject {
 
        public void init(){
 
-              dimension.set(1.5f,1.25f);
+              Gdx.input.setInputProcessor(this);
+              //dimension.set(1.5f,1.25f);
               tRegion = Assets.instance.nave.head;
               origin.set(dimension.x, dimension.y);
               bounds.set( 0, 0, dimension.x, dimension.y );
@@ -41,8 +43,13 @@ public class Nave extends AbstractGameObject {
               disparos = new ArrayList<Disparo>();
               shoots = new HashMap<Integer,Disparo>();
               punteros = new ArrayList<Integer>();
-              velocity.set(5,5);
+              velocity.set(10,7);
               borde = new Borde(bounds);
+              shoot = new Disparo(position.x + dimension.x, dimension.y + position.y);
+              tiempoActual = 0;
+              tiempoPasado = 0;
+              x1 = y1 = punteroCargado = -1;
+
 
        }
 
@@ -50,6 +57,7 @@ public class Nave extends AbstractGameObject {
        public void render(SpriteBatch batch,OrthographicCamera camera) {
 
            TextureRegion reg = null;
+
            // Draw image
            reg = tRegion;
            batch.draw(reg.getTexture(),
@@ -60,111 +68,135 @@ public class Nave extends AbstractGameObject {
                    rotation,
                    reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(),
                    true, false);
+
            // Reset color to white
            batch.setColor(1, 1, 1, 1);
 
-           int pointer = 0;
+           for( int i = 0; i < 5; i++ ){
 
-           if( Gdx.input.isTouched() ){
+                if( Gdx.input.isTouched(i) ){
+
+                    int x = Gdx.input.getX(i);
+                    int y = Gdx.input.getY(i);
+                    //System.out.println(x + " - " + y);
+
+                    if( ( x >= 810 && x <= 900 ) && ( y >= 400 && y <= 460 ) ) {
+
+                          tiempoActual += Gdx.graphics.getDeltaTime();
+                          //System.out.println(tiempoPasado + " - " + tiempoActual + " = " + (tiempoActual - tiempoPasado) );
+
+
+                        if( tiempoActual - tiempoPasado >= 0.3f ) {
+                            tiempoPasado = tiempoActual;
+                            shoot.renderCargado001(batch);
+                            punteroCargado = i;
+                        }else{ shoot.renderCargado002(batch); }
+
+                        x1 = x;
+                        y1 = y;
+
+                    }
+
+                 }
+
+           }
+
+           if( Gdx.input.justTouched() ){
 
                int x = Gdx.input.getX();
                int y = Gdx.input.getY();
 
-               System.out.println(x + " - " + y);
+               //System.out.println(x + " - " + y);
 
                if( ( x >= 810 && x <= 900 ) && ( y >= 400 && y <= 460 ) ) {
 
-                   Disparo disparo = new Disparo(position.x + dimension.x, dimension.y + position.y);
-                   disparo.render(batch);
+                   Disparo disparo = new Disparo(position.x , dimension.y + position.y);
                    disparos.add(disparo);
-                   //Integer puntero = new Integer(pointer);
-                   //shoots.put( puntero, disparo);
-                   //punteros.add( puntero );
+                   AudioManager.instance.play(Assets.instance.sonidos.disparo);
 
-               }
-
-               /*Iterator it = shoots.entrySet().iterator();
-           int i = 0;
-           while ( it.hasNext() ){
-
-                   Map.Entry entry = (Map.Entry)it.next();
-
-                   //if( entry.getKey() == punteros.get(i) ){
-                   ((Disparo)(entry.getValue())).render(batch);
-                       //}
-
-                   i++;*/
-
-           }
-
-
-
-           if( disparos.size() > 0 ) {
-
-               for( Disparo disparo : disparos ){
-                    disparo.position.x += (disparo.velocity.x * Gdx.graphics.getDeltaTime()) + 0.5f;
-                    disparo.render(batch);
                }
 
            }
 
+           for( Disparo disparo : disparos ) {
 
+                disparo.render(batch);
 
+           }
 
+           /*if( !disparos.isEmpty() ) {
 
-           //System.out.println("render - " + disparos.size());
+               //System.out.println("disparos.size = " + disparos.size());
 
-           borde.render(batch);
+               for (Iterator<Disparo> iterator = disparos.iterator(); iterator.hasNext(); ){
+
+                   Disparo d = iterator.next();
+                   if( d.position.x > Constants.VIEWPORT_WIDTH + d.dimension.x ){
+                       iterator.remove();
+                       continue;
+                   }
+
+                   d.render(batch);
+
+               }
+
+           }*/
+
+           //Borde para colisiones
+           //borde.render(batch);
 
        }
 
        @Override
-       public void update(float deltaTime,OrthographicCamera camara){
+       public void update(float deltaTime){
 
-              if( Gdx.input.isTouched() ) {
+              for( int i = 0; i < 5; i++ ) {
 
-                  int x = Gdx.input.getX();
-                  int y = Gdx.input.getY();
+                  if ( Gdx.input.isTouched(i) ) {
 
-                  Vector3 posicion = camara.unproject(new Vector3(x, y, 0));
+                      int x = Gdx.input.getX(i);
+                      int y = Gdx.input.getY(i);
 
-                  if ( x >= 30 && x <= 200 ) {
+                      if (x >= 30 && x <= 200) {
 
-                      if ( y <= 520 && y >= 490 ) {
-                          //position.x -= ( velocity.x + posicion.x ) * deltaTime;
-                          //position.y += (velocity.y + posicion.y) * deltaTime;
-                          position.y -= velocity.y * deltaTime;
-                          bounds.y -= position.y;
+                          if (y <= 520 && y >= 490) {
+                              //position.x -= ( velocity.x + posicion.x ) * deltaTime;
+                              //position.y += (velocity.y + posicion.y) * deltaTime;
+                              position.y -= velocity.y * deltaTime;
+                              bounds.y -= position.y;
 
-                      }
-
-                      if ( y < 490 && y >= 430 ) {
-
-                          if ( x <= 120 ) {
-                              //position.x += (velocity.x + posicion.x) * deltaTime;
-                              position.x -= velocity.x * deltaTime;
-                              bounds.x -= position.x;
                           }
 
-                          if ( x > 120 ) {
-                              //position.x -= (velocity.x + posicion.x) * deltaTime;
-                              position.x += velocity.x * deltaTime;
-                              bounds.x += position.x;
+                          if (y < 490 && y >= 430) {
+
+                              if (x <= 120) {
+                                  //position.x += (velocity.x + posicion.x) * deltaTime;
+                                  position.x -= velocity.x * deltaTime;
+                                  bounds.x -= position.x;
+                              }
+
+                              if (x > 120) {
+                                  //position.x -= (velocity.x + posicion.x) * deltaTime;
+                                  position.x += velocity.x * deltaTime;
+                                  bounds.x += position.x;
+                              }
+
                           }
 
-                      }
+                          if (y < 430 && y >= 360) {
+                              //position.y -= ( velocity.y + posicion.y - 5.0f ) * deltaTime;
+                              position.y += (velocity.y + 5.0f) * deltaTime;
+                              bounds.y += position.y;
 
-                      if ( y < 430 && y >= 360 ) {
-                          //position.y -= ( velocity.y + posicion.y - 5.0f ) * deltaTime;
-                          position.y += ( velocity.y + 5.0f ) * deltaTime;
-                          bounds.y += position.y;
+                          }
 
                       }
 
                   }
 
-              }
 
+
+              }
 
               if( position.x < -Constants.VIEWPORT_WIDTH + 2.5f ){ position.x = -12.5f; }
 
@@ -176,41 +208,80 @@ public class Nave extends AbstractGameObject {
                   position.y = ( Constants.VIEWPORT_HEIGHT / 2 ) - dimension.y;
               }
 
-              borde.contorno.setPosition(position);
+              //Collision box
+              //borde.contorno.setPosition(position);
+              bounds.setPosition(position);
 
-              /*if ( disparos.size() > 0 ) {
-                   for ( Disparo disparo : disparos ) {
-                         disparo.update(deltaTime, camara);
-                   }
-              }*/
+              if( !disparos.isEmpty() ) {
+
+                  //System.out.println("disparos.size = " + disparos.size());
+
+                  for (Iterator<Disparo> iterator = disparos.iterator(); iterator.hasNext(); ){
+
+                       Disparo d = iterator.next();
+                       if( d.position.x > Constants.VIEWPORT_WIDTH + d.dimension.x ){
+                           iterator.remove();
+                           continue;
+                       }
+
+                       d.update(deltaTime);
+
+                  }
+
+              }
 
 
-           /*Iterator it = shoots.entrySet().iterator();
-           int i = 0;
-           while ( it.hasNext() ){
+              //System.out.println(x1 + " - " + y1 + " - " + punteroCargado);
 
-               Map.Entry entry = (Map.Entry)it.next();
+              //if( !touchUp(x1,y1,punteroCargado, Input.Buttons.LEFT) ){
+              //    System.out.println("ia.touchUp");
+                  shoot.update(deltaTime);
+              //}
 
-               //if( entry.getKey() == punteros.get(i) ){
-                   ((Disparo)(entry.getValue())).update(deltaTime,camara);
-               //}
 
-               i++;
 
-           }
-*/
        }
 
     @Override
     public void render(SpriteBatch batch) {}
 
-    public void dibujaRectangulo(float x,float y,float ancho, float alto){
-
-        sr.begin(ShapeRenderer.ShapeType.Line);
-           sr.setColor(Color.GREEN);
-           sr.rect(x,y,ancho,alto);
-        sr.end();
-
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
     }
 
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
+    }
 }

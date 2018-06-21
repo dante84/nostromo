@@ -16,12 +16,16 @@ public class Nivel {
 
     private Fondo fondo;
     private Nave nave;
-    private List<EnemigoUno> lEnemigoUno;
+    protected List<EnemigoUno> lEnemigoUno;
     private EnemigoUno enemigoU;
     private float tiempoActual;
     private Random random;
     private boolean banderaModulo;
     private boolean choco;
+    protected int vidas;
+    protected long puntaje;
+    protected int tiempoNivel;
+    private int tiempoPasado;
 
     protected Nivel() {
         init();
@@ -37,6 +41,10 @@ public class Nivel {
             banderaModulo = true;
             enemigoU = new EnemigoUno();
             choco = true;
+            vidas = 1;
+            puntaje = 000000000L;
+            tiempoNivel = 99;
+            tiempoPasado = 0;
 
     }
 
@@ -47,7 +55,14 @@ public class Nivel {
 
            tiempoActual += Gdx.graphics.getDeltaTime();
            int parteEnteraTiempoActual = (int)tiempoActual;
-           int modulo = parteEnteraTiempoActual % 5;
+           int modulo = parteEnteraTiempoActual % 2;
+
+           //System.out.println(tiempoPasado + " - " + parteEnteraTiempoActual);
+
+           if( parteEnteraTiempoActual - tiempoPasado == 2 ) {
+               tiempoPasado = parteEnteraTiempoActual;
+               tiempoNivel--;
+           }
 
            if ( modulo != 0 ){
                 banderaModulo = true;
@@ -70,16 +85,62 @@ public class Nivel {
                 EnemigoUno eu = iterator.next();
 
                 boolean colisiono = colisionEnemigoUno(nave.bounds, eu.bounds);
-                //System.out.print(" - " + colisiono + " - ");
+
                 if( colisiono ){
+
+                    Gdx.app.error("colisiono = " , colisiono + " | ");
+                    Gdx.app.error("enemigo" ,eu.bounds.x + " | " + eu.bounds.y + " | " + eu.bounds.height + " | " + eu.bounds.width);
+                    AudioManager.instance.play(Assets.instance.sonidos.explosion);
                     iterator.remove();
                     nave = new Nave();
+                    vidas--;
                     continue;
+
                 }
 
                 eu.render(batch,camera);
 
            }
+
+
+           List<Disparo> shoots = nave.disparos;
+
+           //if( choco ) { enemigoU.render(batch,camera); }
+
+           //if ( shoots.size() > 0 ){
+
+                for( Iterator<EnemigoUno> iterator = lEnemigoUno.iterator(); iterator.hasNext(); ){
+
+                     EnemigoUno eu = iterator.next();
+
+                     for( Iterator<Disparo> iteratorD = shoots.iterator(); iteratorD.hasNext(); ){
+
+                          Disparo disparo = iteratorD.next();
+                          boolean colisiono = colisionEnemigoUno(disparo.bounds, eu.bounds);
+
+                          if( colisiono ){
+
+                              /*Gdx.app.error("colisiono = " , colisiono + " | ");
+                              Gdx.app.error("disparo" ,disparo.bounds.x + " | " + disparo.bounds.y + " | " + disparo.bounds.height + " | " + disparo.bounds.width);
+                              Gdx.app.error("enemigo" ,eu.bounds.x + " | " + eu.bounds.y + " | " + eu.bounds.height + " | " + eu.bounds.width);*/
+
+
+                              eu.bounds = new Rectangle();
+                              iterator.remove();
+                              iteratorD.remove();
+                              puntaje += 100L;
+                              AudioManager.instance.play(Assets.instance.sonidos.explosion);
+                              break;
+
+                              //choco = false;
+
+                          }
+
+                     }
+
+                }
+
+           //}
 
            /*boolean colisiono = colisionEnemigoUno(nave.bounds, enemigoU.bounds);
            System.out.print(" | " + colisiono + " | ");
@@ -93,23 +154,35 @@ public class Nivel {
 
     }
 
-    public void update (float deltaTime,OrthographicCamera camara) {
+    public void update (float deltaTime) {
 
-           fondo.update(deltaTime,camara);
-           nave.update(deltaTime,camara);
+           if( !(tiempoNivel < 0) )
+               fondo.update(deltaTime);
 
-           //if( choco )
-             //  enemigoU.update(deltaTime,camara);
+           nave.update(deltaTime);
 
-           //System.out.println(lEnemigoUno.size());
+           /*if( choco )
+             enemigoU.update(deltaTime,camara);
+           */
 
-           for( int i = 0; i < lEnemigoUno.size(); i++ ){
+           if( !lEnemigoUno.isEmpty() ){
 
-               EnemigoUno eu = lEnemigoUno.get(i);
-               eu.update(deltaTime,camara);
+               //System.out.println("lEnemigoUno size = " + lEnemigoUno.size());
+
+               for( Iterator<EnemigoUno> iterator = lEnemigoUno.iterator(); iterator.hasNext(); ){
+
+                    EnemigoUno eu = iterator.next();
+
+                    if( eu.position.x < -eu.dimension.x - Constants.VIEWPORT_WIDTH ){
+                        iterator.remove();
+                        continue;
+                    }
+
+                     eu.update(deltaTime);
+
+               }
 
            }
-
 
     }
 
@@ -117,9 +190,6 @@ public class Nivel {
 
         Rectangle r1 = new Rectangle();
         Rectangle r2 = new Rectangle();
-
-        //System.out.println(jugador.x + " | " + jugador.y + " | " + jugador.height + " | " + jugador.width);
-        //System.out.println(enemigo.x + " | " + enemigo.y + " | " + enemigo.height + " | " + enemigo.width);
 
         r1.set(jugador);
         r2.set(enemigo);

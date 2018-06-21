@@ -17,4 +17,13 @@ public class Constants {
 
     public static final String LEVEL_01 = "badlogic.jpg";
 
+    public static final String TEXTURE_ATLAS_UI = "imagenes/ui.atlas";
+    public static final String TEXTURE_ATLAS_LIBGDX_UI = "imagenes/uiskin.atlas";
+
+    // Location of description file for skins
+    public static final String SKIN_LIBGDX_UI = "imagenes/uiskin.json";
+    public static final String SKIN_CANYONBUNNY_UI = "imagenes/ui.json";
+
+    public static final String PREFERENCES = ".";
+
 }
